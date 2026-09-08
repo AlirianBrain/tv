@@ -40,14 +40,16 @@
   .board > * { position: relative; }
 
   /* Masthead */
-  .masthead { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 2rem; }
+  .masthead { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 2rem; }
+  .today { text-align: right; }
+  .clock-line { display: flex; justify-content: flex-end; align-items: baseline; gap: .8rem; margin-top: .35rem; }
+  .clock-line .clock-time { font-size: 1.6rem; }
   .brand { display: flex; align-items: center; gap: 1rem; }
   .ring { position: relative; width: 4.6rem; height: 4.6rem; flex: none; border-radius: 50%; background: var(--white); color: var(--teal); display: grid; place-items: center; font-family: var(--display); font-style: italic; font-weight: 700; font-size: 1.95rem; line-height: 1; letter-spacing: -.03em; padding-right: .45rem; box-sizing: border-box; }
   .ring small { position: absolute; right: .5rem; top: .9rem; font-family: var(--text); font-style: normal; font-weight: 600; font-size: .74rem; color: var(--aqua-deep); letter-spacing: 0; }
   .brand-text { display: flex; flex-direction: column; gap: .2rem; }
   .brand-title { font-weight: 800; font-size: 1.45rem; line-height: 1; letter-spacing: -.01em; }
   .brand-sub { font-size: .74rem; color: var(--aqua); letter-spacing: .18em; text-transform: uppercase; font-weight: 600; }
-  .today { text-align: center; }
   .today-day { font-family: var(--display); font-style: italic; font-weight: 700; font-size: 2.7rem; line-height: 1; letter-spacing: -.02em; }
   .today-date { font-size: 1.05rem; color: var(--on-teal-muted); margin-top: .3rem; font-variant-numeric: tabular-nums; font-weight: 500; }
   .today-flag { display: inline-block; margin-left: .7rem; padding: .15rem .65rem; border: .09rem solid var(--aqua); border-radius: 999px; font-size: .68rem; letter-spacing: .16em; text-transform: uppercase; color: var(--aqua); font-weight: 600; vertical-align: middle; }
@@ -119,17 +121,13 @@
     <div class="today">
       <div class="today-day" id="todayDay">Monday</div>
       <div class="today-date"><span id="todayDate">7 September 2026</span><span class="today-flag" id="todayFlag" hidden></span></div>
-    </div>
-    <div class="clock">
-      <div class="clock-time" id="clock">00:00</div>
-      <div class="clock-sub" id="summary">Loading schedule</div>
+      <div class="clock-line"><span class="clock-time" id="clock">00:00</span><span class="clock-sub" id="summary">Loading schedule</span></div>
     </div>
   </header>
 
   <div class="plan-wrap" id="planWrap">
     <div class="plan" id="plan" aria-live="polite"></div>
   </div>
-  <div class="stamp" id="updated"></div>
 </main>
 
 <script id="schedule-data" type="application/json">
@@ -361,9 +359,9 @@
   }
 
   function showUpdated() {
+    // No visible stamp on the board any more; the read time stays available in the console for checks.
     const src = DATA.source || {};
-    const t = src.extractedAt ? src.extractedAt.replace('T', ' ').slice(0, 16) : '';
-    document.getElementById('updated').textContent = `Schedule read ${t} \u00B7 refreshes nightly at 00:00`;
+    if (src.extractedAt) console.info('Schedule read ' + src.extractedAt.replace('T', ' ').slice(0, 16) + ' from ' + (src.file || ''));
   }
 
   // Nightly refresh: re-fetch the JSON just after midnight (and on load) when DATA_URL is set.
