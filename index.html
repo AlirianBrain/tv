@@ -369,7 +369,7 @@
 
     function choose() {
       const r = Math.random();
-      const place = r < 0.6 ? P.rooms[Math.floor(Math.random() * P.rooms.length)] : r < 0.85 ? P.strolls[Math.floor(Math.random() * P.strolls.length)] : P.away;
+      const place = r < 0.62 ? P.rooms[Math.floor(Math.random() * P.rooms.length)] : r < 0.92 ? P.strolls[Math.floor(Math.random() * P.strolls.length)] : P.away;
       const next = place.via();
       path = route.slice().reverse().slice(1).concat(next);   // back out to the corridor, then on to the new spot
       route = next; kind = place.kind;
@@ -378,7 +378,7 @@
     function dwell() {
       const now = performance.now() / 1000 * T;
       if (kind === 'room') dwellUntil = now + rand(3 * MIN, 60 * MIN);
-      else if (kind === 'away') { dwellUntil = now + rand(10 * MIN, 45 * MIN); shown = false; if (girlEl) girlEl.style.opacity = 0; }
+      else if (kind === 'away') { dwellUntil = now + rand(5 * MIN, 12 * MIN); shown = false; if (girlEl) girlEl.style.opacity = 0; }
       else dwellUntil = now + rand(20, 90);
     }
 
@@ -428,7 +428,7 @@
     function draw() {
       if (!girlEl) return;
       const [px, py] = ISO(pos.x, pos.y, SLAB_H + PLATE_H);
-      girlEl.setAttribute('transform', `translate(${px.toFixed(2)} ${py.toFixed(2)}) scale(1.35)`);
+      girlEl.setAttribute('transform', `translate(${px.toFixed(2)} ${py.toFixed(2)}) scale(1.6)`);
       girlEl.querySelector('.body').setAttribute('transform', `scale(${facing} 1)`);
       // the balloon floats: it swings from her hand with a slow sway and a smaller wobble, bobs up and down,
       // and trails behind her while she walks
@@ -460,7 +460,7 @@
     }
     function start() {
       if (mode === 'off') return;
-      dwellUntil = performance.now() / 1000 * T + (mode === 'fast' ? 2 : rand(20, 60));
+      dwellUntil = performance.now() / 1000 * T + (mode === 'fast' ? 2 : rand(3, 6));   // she walks in from the lifts within seconds
       setInterval(tick, 40);   // a timer, not animation frames: keeps going when the browser throttles a hidden tab
     }
     const debug = () => ({ pos, path: path.slice(0, 4), pathLen: path.length, dwellUntil, kind, shown, last, T, now: performance.now() / 1000 * T });
@@ -519,8 +519,9 @@
     } catch (e) { /* keep showing the last good schedule */ }
   }
   function scheduleNightly() {
+    // At 00:05 the page reloads itself completely, so the TV picks up both a new schedule file and a new page version.
     const now = new Date(), next = new Date(now); next.setHours(24, 5, 0, 0);
-    setTimeout(() => { refreshData(); scheduleNightly(); }, next - now);
+    setTimeout(() => { location.reload(); }, next - now);
   }
 
   (function init() {
