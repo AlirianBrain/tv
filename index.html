@@ -96,10 +96,8 @@
   .walker .leg { transform-box: fill-box; transform-origin: 50% 0; }
   .walker.walking .leg-l { animation: step 0.7s ease-in-out infinite; }
   .walker.walking .leg-r { animation: step 0.7s ease-in-out infinite reverse; }
-  .walker .balloon-group { animation: bob 3.2s ease-in-out infinite; }
   @keyframes step { 0%, 100% { transform: rotate(-16deg); } 50% { transform: rotate(16deg); } }
-  @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-1.4px); } }
-  @media (prefers-reduced-motion: reduce) { .walker .leg, .walker .balloon-group { animation: none !important; } }
+  @media (prefers-reduced-motion: reduce) { .walker .leg { animation: none !important; } }
   .pin-pulse { animation: ring 2s ease-out infinite; transform-box: fill-box; transform-origin: center; }
   @keyframes ring { 0% { opacity: .55; transform: scale(.6); } 100% { opacity: 0; transform: scale(1.5); } }
   @media (prefers-reduced-motion: reduce) { .pin-pulse { animation: none; opacity: 0; } }
@@ -401,10 +399,10 @@
           <path d="M1.8,-11.6 L4.3,-16.2" stroke="#E9C4AC" stroke-width="1.15" stroke-linecap="round"/>
           <circle cx="0" cy="-14.7" r="2.6" fill="url(#gSkin)"/>
           <path d="M-2.9,-14.8 A2.9,2.9 0 0 1 2.9,-14.8 L2.9,-13.1 L2.15,-13.1 L2.15,-14.3 A2.15,2.15 0 0 0 -2.15,-14.3 L-2.15,-13.1 L-2.9,-13.1 Z" fill="url(#gHair)"/>
-          <path d="M4.3,-16.2 Q5.2,-20.5 7.2,-24.2" stroke="#3C4A52" stroke-width=".35" fill="none"/>
         </g>
         <g class="balloon-group">
-          <g transform="translate(7.6,-31)">
+          <path d="M0,0 Q1.2,-4.6 3.2,-8.4" stroke="#3C4A52" stroke-width=".35" fill="none"/>
+          <g transform="translate(3.5,-15.2)">
             <path d="M-.9,6.4 L.9,6.4 L0,7.6 Z" fill="#003544"/>
             <circle r="6.6" fill="url(#gBalloon)"/>
             <ellipse cx="-2.3" cy="-3.1" rx="1.6" ry="1" fill="rgba(255,255,255,.55)" transform="rotate(-30 -2.3 -3.1)"/>
@@ -433,6 +431,12 @@
       const [px, py] = ISO(pos.x, pos.y, SLAB_H + PLATE_H);
       girlEl.setAttribute('transform', `translate(${px.toFixed(2)} ${py.toFixed(2)}) scale(1.35)`);
       girlEl.querySelector('.body').setAttribute('transform', `scale(${facing} 1)`);
+      // the balloon floats: it swings from her hand with a slow sway and a smaller wobble, bobs up and down,
+      // and trails behind her while she walks
+      const s = performance.now() / 1000;
+      const sway = 9 * Math.sin(s * 1.15) + 3 * Math.sin(s * 2.9 + 1) + (path.length ? -facing * 11 : 0);
+      const bob = 1.3 * Math.sin(s * 1.7);
+      girlEl.querySelector('.balloon-group').setAttribute('transform', `translate(${(facing * 4.3).toFixed(2)} ${(-16.2 + bob).toFixed(2)}) rotate(${sway.toFixed(2)})`);
     }
     function tick() {
       if (!el || !girlEl) return;
@@ -441,6 +445,7 @@
       if (path.length === 0) {
         if (t >= dwellUntil) choose();
         el.classList.remove('walking');
+        draw();   // she stands still, the balloon keeps floating
         return;
       }
       let left = SPEED * dt;
