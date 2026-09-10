@@ -93,6 +93,10 @@
   /* The wandering girl with the POP24 balloon: drawn on its own layer above the plan and the chips */
   .walker { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; z-index: 3; }
   .walker .girl { transition: opacity 1.6s ease; }
+  /* she is drawn as an outline: dark line work with a near-white fill inside */
+  .walker .body path, .walker .body circle { fill: #FFFFFF; fill-opacity: .92; stroke: #1A1E23; stroke-width: .55; stroke-linejoin: round; stroke-linecap: round; }
+  .walker .body .arm { fill: none; stroke-width: .7; }
+  .walker .body .hair { fill: #1A1E23; fill-opacity: 1; }
   .walker .leg { transform-box: fill-box; transform-origin: 50% 0; }
   .walker.walking .leg-l { animation: step 0.7s ease-in-out infinite; }
   .walker.walking .leg-r { animation: step 0.7s ease-in-out infinite reverse; }
@@ -394,10 +398,10 @@
           <g class="leg leg-l"><path d="M-2.1,-5.6 h1.7 v5.2 h-1.7 z" fill="url(#gInk)"/><path d="M-2.6,-.9 h2.7 c.5,0 .8,.4 .7,.8 h-3.9 c-.1,-.4 .1,-.8 .5,-.8 z" fill="#0E1114"/></g>
           <g class="leg leg-r"><path d="M.3,-5.6 h1.7 v5.2 h-1.7 z" fill="url(#gInk)"/><path d="M-.2,-.9 h2.7 c.5,0 .8,.4 .7,.8 h-3.9 c-.1,-.4 .1,-.8 .5,-.8 z" fill="#0E1114"/></g>
           <path d="M-2.1,-12.8 L2.2,-12.8 C2.5,-11.2 2.8,-9.6 3.4,-8.2 C3.9,-7.1 4.4,-6.2 4.7,-5.2 C3.1,-4.7 1.2,-4.5 -.6,-4.5 C-2.5,-4.6 -3.9,-4.9 -4.9,-5.4 C-4.4,-6.6 -3.7,-8.2 -3.1,-9.9 C-2.7,-11.0 -2.3,-12.0 -2.1,-12.8 Z" fill="url(#gInk)"/>
-          <path d="M-1.7,-12.3 C-2.4,-11.0 -3.0,-9.6 -3.4,-8.0" stroke="#1A1E23" stroke-width="1.15" stroke-linecap="round" fill="none"/>
-          <path d="M1.9,-12.4 C2.9,-13.8 3.8,-15.2 4.6,-16.7" stroke="#1A1E23" stroke-width="1.2" stroke-linecap="round" fill="none"/>
-          <circle cx=".5" cy="-15.0" r="2.5" fill="url(#gInk)"/>
-          <path d="M-2.4,-15.4 C-2.5,-17.6 -.8,-18.7 .9,-18.5 C2.6,-18.3 3.5,-17.0 3.3,-15.3 C3.2,-14.5 3.2,-13.8 3.5,-13.0 L2.6,-13.2 C2.8,-14.0 2.7,-14.8 2.4,-15.5 C2.0,-16.4 1.1,-16.9 .2,-16.8 C-1.0,-16.7 -1.7,-15.9 -1.9,-14.9 C-2.0,-14.2 -2.0,-13.6 -1.8,-12.9 C-2.6,-12.9 -3.3,-13.2 -3.6,-13.8 C-3.4,-14.5 -3.0,-15.0 -2.4,-15.4 Z" fill="#0E1114"/>
+          <path class="arm" d="M-1.7,-12.3 C-2.4,-11.0 -3.0,-9.6 -3.4,-8.0"/>
+          <path class="arm" d="M1.9,-12.4 C2.9,-13.8 3.8,-15.2 4.6,-16.7"/>
+          <circle cx=".5" cy="-15.0" r="2.5"/>
+          <path class="hair" d="M-2.4,-15.4 C-2.5,-17.6 -.8,-18.7 .9,-18.5 C2.6,-18.3 3.5,-17.0 3.3,-15.3 C3.2,-14.5 3.2,-13.8 3.5,-13.0 L2.6,-13.2 C2.8,-14.0 2.7,-14.8 2.4,-15.5 C2.0,-16.4 1.1,-16.9 .2,-16.8 C-1.0,-16.7 -1.7,-15.9 -1.9,-14.9 C-2.0,-14.2 -2.0,-13.6 -1.8,-12.9 C-2.6,-12.9 -3.3,-13.2 -3.6,-13.8 C-3.4,-14.5 -3.0,-15.0 -2.4,-15.4 Z"/>
         </g>
         <g class="balloon-group">
           <path d="M.5,-.9 Q1.5,-4.9 3.2,-8.4" stroke="#3C4A52" stroke-width=".35" fill="none"/>
@@ -428,7 +432,7 @@
     function draw() {
       if (!girlEl) return;
       const [px, py] = ISO(pos.x, pos.y, SLAB_H + PLATE_H);
-      girlEl.setAttribute('transform', `translate(${px.toFixed(2)} ${py.toFixed(2)}) scale(1.6)`);
+      girlEl.setAttribute('transform', `translate(${px.toFixed(2)} ${py.toFixed(2)}) scale(1.28)`);
       girlEl.querySelector('.body').setAttribute('transform', `scale(${facing} 1)`);
       // the balloon floats: it swings from her hand with a slow sway and a smaller wobble, bobs up and down,
       // and trails behind her while she walks
